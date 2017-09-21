@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <title>ABRAHAMSEN AUDIO PORTAL</title>
+    <script type="text/javascript" src="Scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery_ajaxupload.js"></script>
+    <script type="text/javascript" src="/lib/js/functionlib.js"></script>
+    <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script type="text/javascript" src="/lib/js/modal_dialog.js"></script>
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link href="Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+<!--
+    var langactive;
+    var languages = null;
+
+$(document).ready(function()
+{
+    languages = {
+                 "lang":
+                    {
+                        "english": {
+                            "login": "Login ",
+                            "rememberMe": "Remember Me",
+                            "username": "Username",
+                            "password": "Password",
+                            "error": "Error1, Something went wrong, try again",
+                            "feil": "Please enter username and password",
+                            "feilpass": "Wrong username or password",
+                            "waitingDialog": "Logging in"
+                        },
+                        "norsk": {
+                            "login": "Logg Inn ",
+                            "rememberMe": "Husk Meg",
+                            "username": "Brukernavn",
+                            "password": "Passord",
+                            "error": "Error1, Noe gikk galt, prøv igjen",
+                            "feil": "Skriv inn brukernavn og passord",
+                            "feilpass": "Feil brukernavn eller passord",
+                            "waitingDialog": "Logger inn"
+                        }
+                    }
+    };
+    
+    
+    adjustStyle($(this).width());
+    $(window).resize(function ()
+    {
+        adjustStyle($(this).width());
+    });
+
+    if (!localStorage.langactiveLocal)
+    {
+        langactive = "english";
+        $('#Language-english').attr('Checked', 'Checked');
+        localStorage.langactiveLocal = "english";
+    }
+    else
+    {
+        langactive = localStorage.langactiveLocal;
+        $('#Language-' + [langactive]).attr('Checked', 'Checked');
+        $('#cmdLogginn b').text(languages.lang[langactive].login);
+        $('#txtrememberMe').text(languages.lang[langactive].rememberMe);
+        $('#inputEmail').attr("placeholder", languages.lang[langactive].username);
+        $('#inputPassword').attr("placeholder", languages.lang[langactive].password);        
+    }
+    $(".reveal").on('click', function ()
+    {
+        var $pwd = $(".pwd");
+        if ($pwd.attr('type') === 'password')
+        {
+            $pwd.attr('type', 'text');            
+        } else
+        {
+            $pwd.attr('type', 'password');            
+        }
+    });
+
+    $('input[name="radio-choice"]').click(function ()
+    {        
+        localStorage.langactiveLocal = $(this).data('language');
+        langactive = $(this).data('language');
+        if ($(this).is(':checked')) {
+            $('#cmdLogginn b').text(languages.lang[$(this).data('language')].login);
+            $('#txtrememberMe').text(languages.lang[$(this).data('language')].rememberMe);
+            $('#inputEmail').attr("placeholder", languages.lang[$(this).data('language')].username);
+            $('#inputPassword').attr("placeholder", languages.lang[$(this).data('language')].password);            
+        }
+    });
+//$('#rememberMe').attr('Checked',false);
+
+
+	$("#cmdLogginn").click(function(){submitlogginn();});
+	$('#inputEmail').val(localStorage.userName);
+	$('#inputPassword').val(localStorage.password);
+	if (localStorage.checkBoxValidation)
+	{
+	    $('#rememberMe').attr('Checked', 'Checked');
+	}
+});
+
+function submitlogginn()
+{
+	 	var output = "brukernavn=" + $('#inputEmail').val() + "&passord=" + $('#inputPassword').val();
+		$.ajaxSetup({cache: false});
+		$.ajax(
+		{
+			type: "POST",
+			url: "api/login.asp",
+		    data: output,
+		    dataType: 'json',
+		    async: true,
+		    cache: false,
+		    timeout: 100000,
+			error: function()
+			{
+			    setTopsliderMessage(languages.lang[langactive].error, 2500);
+
+			},
+			success: function(responseText)
+			{
+			if (responseText.Transfer == "feil")
+			{
+			    setTopsliderMessage(languages.lang[langactive].feil, 2500);
+			}
+			if (responseText.Transfer == "feilbrukerpass")
+			{
+			    setTopsliderMessage(languages.lang[langactive].feilpass, 2500);
+			}
+			if (responseText.Transfer == "ok")
+			{
+			waitingDialog.show(languages.lang[langactive].waitingDialog);
+			localStorage.bruker = "ok";
+			localStorage.fornavn = responseText.fornavn;
+			localStorage.etternavn = responseText.etternavn;
+			localStorage.status = responseText.status;
+			localStorage.brukertype = responseText.brukertype;
+			localStorage.brukerid = responseText.brukerid;			
+			setTimeout(function ()
+			{
+			waitingDialog.hide();
+			window.location.href = "/indexbruker.html";
+			}, 1000);
+
+			if ($('#rememberMe').is(':checked'))
+		{
+            // save username and password
+            localStorage.userName = $('#inputEmail').val();
+            localStorage.password = $('#inputPassword').val();
+            localStorage.checkBoxValidation = "true";
+        }
+      else
+      	{
+			localStorage.removeItem('userName');
+	      	localStorage.removeItem('password');
+	      	localStorage.removeItem('checkBoxValidation');
+	        $('#inputEmail').val(localStorage.userName);
+	        $('#inputPassword').val(localStorage.password);
+	        $('#rememberMe').attr('Checked',false);
+
+        }
+			}
+		}
+	});
+
+}
+$(document).keypress(function (e) {
+    if (e.which == 13) {
+        submitlogginn();
+    }
+});
+function adjustStyle(width)
+{
+	width = parseInt(width);
+	if (width >= 1200)
+	{
+	    $("#size-stylesheet").attr("href", "/lib/css/lg.css");
+	    $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+	}
+	else if (width >= 992 && width < 1200)
+	{
+	    $("#size-stylesheet").attr("href", "/lib/css/md.css");
+	    $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+	}
+	else if (width >= 768  && width < 991)
+	{
+	    $("#size-stylesheet").attr("href", "/lib/css/sm.css");
+	    $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+	}
+	else
+	{
+	    $("#size-stylesheet").attr("href", "/lib/css/xs.css");
+	    $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+	}
+}
+// -->
+    </script>
+    <style>
+        .col-centered {
+            float: none;
+            margin: 0 auto;
+        }
+
+        .topp_logginn {
+            margin-top: 0px;
+        }
+
+        #logo {
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #user {
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #spiker {
+            margin-top: -40px;
+            display: block;
+            margin-left: auto;
+            margin-right: 122px;
+        }
+
+        .account-wall {
+            margin-top: 10px;
+            margin-left: -10px;
+            margin-right: -10px;
+            padding: 30px 30px 30px 30px;
+            background-color: #ebebeb;
+            border-radius: 35px;
+            box-shadow: 10px 10px 5px #d9d9d9;
+        }
+    </style>
+</head>
+<body>    
+    <div class="container">
+        <nav class="navbar navbar-default navbar-fixed-top">            
+            <div class="row">
+                <div class="col-sm-4">
+                    <img id="logo" class="img-responsive" src="/images/logo/aa_logo80X75.png">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <p class="text-center">ABRAHAMSEN AUDIO</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <h4 class="text-center">PORTAL</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">&nbsp;</div>
+            </div>
+        </nav>        
+        <section id="logginn" class="topp_logginn">
+            <div class="row">
+                <div class="col-sm-4 col-centered">
+                    <div class="account-wall">
+                        <div class="row">
+                            <img id="spiker" src="/images/spiker.png" height="60" width="60">
+                            <img id="user" src="/images/portal_login.png" height="90" width="90">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2">&nbsp;</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 col-centered">&nbsp;</div>
+                        </div>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-user">
+                                </i>
+                            </span>
+                            <input class="form-control" placeholder="Username" id="inputEmail" name="email" type="email">
+                        </div>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-lock">
+                                </i>
+                            </span>
+                            <input class="form-control pwd" placeholder="Password" id="inputPassword" name="password" type="password">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default reveal" type="button"><i class="glyphicon glyphicon-eye-open "></i></button>                                
+                            </span>
+                        </div>
+                        <div class="form-check mb-2 mr-sm-2 mb-sm-0">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="rememberMe" type="checkbox"> <span id="txtrememberMe"> Remember me</span>
+
+                            </label>
+                        </div>
+
+                        <button class="btn btn-lg btn-primary btn-block" id="cmdLogginn" type="submit"><b>Login </b><i class="fa fa-sign-in"></i></button>
+                        <div class="row">&nbsp;</div>
+                        <div class="row">
+                            <div class="col-sm-4 col-centered">
+                                <div class="radio">
+                                    <label><input type="radio" name="radio-choice" id="Language-english" data-language="english" value="English">English</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input type="radio" name="radio-choice" id="Language-norsk" data-language="norsk" value="Norsk">Norsk</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div> <!-- /container -->
+    <!-- Template -->
+    <link type="text/css" rel="stylesheet" href="/lib/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/lib/css/admin.css">
+
+    <!-- End Template -->
+
+
+
+</body>
+
+</html>

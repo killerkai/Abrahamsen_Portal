@@ -1,0 +1,715 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <title>ABRAHAMSEN AUDIO PORTAL</title>
+    <script type="text/javascript" src="Scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery_ajaxupload.js"></script>
+    <script type="text/javascript" src="/lib/js/functionlib.js"></script>
+    <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="Scripts/jquery.scrollTo.js"></script>
+    <script type="text/javascript" src="/lib/js/modal_dialog.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link href="Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />    
+    <link href="Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+    <script type="text/javascript">
+<!--
+    var langactive;
+    var languages = null;
+    var TopSliderInterval;
+    var clickrobot = "0";
+    if (!localStorage.bruker || localStorage.bruker == "")
+    {
+        window.location.href = "/login.html";
+    }
+    $(document).ready(function()
+    {
+        languages = {
+            "lang":
+               {
+                   "english": {
+                       "logout": "Logout",
+                       "mainMenu1": "Products",
+                       "mainMenu2": "Customers",
+                       "mainMenu3": "Store"
+                   },
+                   "norsk": {
+                       "logout": "LoggUt",
+                       "mainMenu1": "Produkter",
+                       "mainMenu2": "Kunder",
+                       "mainMenu3": "Butikk"
+                   }
+               }
+        };
+        adjustStyle($(this).width());
+        $(window).resize(function ()
+        {
+            adjustStyle($(this).width());
+        });        
+        $("#cmdLoggut").click(function () { loggut(); });
+        $(".portal").click(function ()
+        {
+            changeVisibility('portal');
+            if ($("#activePortal").hasClass("active"))
+            {
+                $("#activePortal").removeClass("active");
+            } else
+            {
+                $("#activePortal").addClass("active");
+
+            }
+            if ($('#navbar-collapse-1').hasClass('in') == true)
+            {
+                $(".navbar-toggle").click();
+            }
+            
+        });
+        $(".mainMenu1").click(function ()
+        {
+            changeVisibility('products');
+            if ($("#activeMainMenu1").hasClass("active"))
+            {
+                $("#activeMainMenu1").removeClass("active");
+            } else
+            {
+                $("#activeMainMenu1").addClass("active");
+
+            }
+            hentprodukter();
+        });
+            
+        $(".mainMenu2").click(function ()
+        {
+            changeVisibility('customers');
+            if ($("#activeMainMenu2").hasClass("active"))
+            {
+                $("#activeMainMenu2").removeClass("active");
+            } else
+            {
+                $("#activeMainMenu2").addClass("active");
+
+            }
+        });
+        $(".mainMenu3").click(function ()
+        {
+            changeVisibility('store');
+            if ($("#activeMainMenu3").hasClass("active"))
+            {
+                $("#activeMainMenu3").removeClass("active");
+            } else
+            {
+                $("#activeMainMenu3").addClass("active");
+
+            }
+        });
+
+        langactive = localStorage.langactiveLocal;
+        var user = localStorage.fornavn + localStorage.etternavn; 
+        $('.user').text(user);
+        $('.logout').text(languages.lang[langactive].logout);
+        $('.mainMenu1').text(languages.lang[langactive].mainMenu1);
+        $('.mainMenu2').text(languages.lang[langactive].mainMenu2);
+        $('.mainMenu3').text(languages.lang[langactive].mainMenu3);
+        //Statestikk begin        
+                      
+
+                $('.main_window').highcharts({
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Antall Pr Uke'
+                    },
+                    xAxis: {
+                        categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                    },
+
+                    plotOptions: {
+                        series: {
+                            animation: {
+                                duration: 2000,
+                                easing: 'easeOutBounce'
+                            }
+                        }
+                    },
+
+                    series: [{
+                        data: [29.9, 71.5, 106.4, 129.2, 111]
+                    }]
+                });
+           
+            //Statestikk end
+    });
+    Math.easeOutBounce = function (pos)
+    {
+        if ((pos) < (1 / 2.75))
+        {
+            return (7.5625 * pos * pos);
+        }
+        if (pos < (2 / 2.75))
+        {
+            return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+        }
+        if (pos < (2.5 / 2.75))
+        {
+            return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+        }
+        return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    };
+    function adjustStyle(width)
+    {
+        width = parseInt(width);
+        if (width >= 1200)
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/lg.css");
+            $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+        }
+        else if (width >= 992 && width < 1200)
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/md.css");
+            $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+        }
+        else if (width >= 768 && width < 991)
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/sm.css");
+            $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+        }
+        else
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/xs.css");
+            $("#logo").attr("src", "/images/logo/aa_logo50X47.png");
+        }
+    }
+    function loggut()
+    {
+        localStorage.removeItem('bruker');
+        localStorage.removeItem('brukerid');
+        localStorage.removeItem('brukertype');
+        localStorage.removeItem('etternavn');
+        localStorage.removeItem('fornavn');
+        localStorage.removeItem('status');        
+        window.location.href = "/login.html";
+    }
+    function hentprodukter(panelid)
+    {
+        
+        $.ajaxSetup({ cache: false });
+        $.ajax(
+        {
+            type: "POST",
+            url: "api/hentprodukter_data.asp",
+            //data: output,
+            dataType: 'json',
+            async: true,
+            cache: false,
+            timeout: 100000,
+            error: function ()
+            {
+                setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 1000);	
+                 
+            },
+            success: function (responseText)
+            {
+                var status;
+                var statustxt;
+                var butikkstatus;
+                var butikkstatustxt;
+                var webstatus;
+                var webstatustxt;
+                var slidestatus;
+                var slidestatustxt;
+                var html1 = '<div class="accordion">';                   
+                produktliste = responseText.produkt;
+                produktltillegg = responseText.produkttillegg;                    
+                $.each(produktliste, function (i, val)
+                {
+                    if (val.status == 0)
+                    {
+                        status = "red";
+                        statustxt = "Status av";
+                    } else
+                    {
+                        status = "green";
+                        statustxt = "Status på";
+                    }
+                    if (val.butikkstatus == "På lager")
+                    {
+                        butikkstatus = "green";
+                        butikkstatustxt = "på lager";
+                    }
+                    if (val.butikkstatus == "Ikke på lager")
+                    {
+                        butikkstatus = "red";
+                        butikkstatustxt = "Ikke på lager";
+                    }
+                    if (val.butikkstatus == "Ikke vis i butikk")
+                    {
+                        butikkstatus = "grey";
+                        butikkstatustxt = "Ikke vis i butikk";
+                    }
+                    if (val.webstatus == "ja")
+                    {
+                        webstatus = "green";
+                        webstatustxt = "Vis på web";
+                    } else
+                    {
+                        webstatus = "red";
+                        webstatustxt = "ikke vis på web";
+                    }
+                    if (val.slidestatus == "ja")
+                    {
+                        slidestatus = "green";
+                        slidestatustxt = "Vis i slider";
+                    } else
+                    {
+                        slidestatus = "red";
+                        slidestatustxt = "ikke vis i slider";
+                    }
+                        
+                    html1 += '<h3 class="header" id = "scroll"><div class="col-sm-2">' + val.produkt + '</div><div class="col-sm-5">' + val.produktkategori + '</div><div class="col-sm-1"><img class="ledslide" src="images/led_' + slidestatus + '.png" title="' + slidestatustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"><img class="ledweb" src="images/led_' + webstatus + '.png" title="' + webstatustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"><img class="ledbutikk" src="images/led_' + butikkstatus + '.png" title="' + butikkstatustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"><img class="ledprodukt"src="images/led_' + status + '.png" title="' + statustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"></div></h3>';
+                        
+                    html1 += '<div class="form-group">';
+                    html1 += '<div class="col-sm-2">Reklame slider:</div><div class="col-sm-2">Vis på Web:</div><div class="col-sm-2">Butikkstatus:</div><div class="col-sm-2">Produktstatus:</div><div class="col-sm-4">Pris:</div>';
+                    html1 += '<div class="col-sm-2">';
+                    html1 += '<select class="form-control hasChange col-sm-12 slidestatus">';
+                    html1 += '<option selected>' + val.slidestatus + '</option>';
+                    html1 += '<option value="ja">ja</option>';
+                    html1 += '<option value="nei">nei</option>';
+                    html1 += '</select>';
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-2">';
+                    html1 += '<select class="form-control hasChange col-sm-12 webstatus">';
+                    html1 += '<option selected>' + val.webstatus + '</option>';
+                    html1 += '<option value="1">ja</option>';
+                    html1 += '<option value="2">nei</option>';
+                    html1 += '</select>';
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-2">';
+                    html1 += '<select class="form-control hasChange col-sm-12 butikkstatus">';
+                    html1 += '<option selected>' + butikkstatustxt + '</option>';
+                    html1 += '<option value="På lager">På lager</option>';
+                    html1 += '<option value="Ikke på lager">Ikke på lager</option>';
+                    html1 += '<option value="Ikke vis i butikk">Ikke vis i butikk</option>';
+                    html1 += '</select>';
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-2">';
+                    html1 += '<select class="form-control hasChange col-sm-12 produktstatus">';
+                    html1 += '<option selected>' + statustxt + '</option>';
+                    html1 += '<option value="1">På</option>';
+                    html1 += '<option value="2">Av</option>';
+                    html1 += '</select>';
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-2">';
+                    html1 += '<input class="form-control col-sm-12 hasChange pris" value="' + val.pris + '">';
+                    html1 += '</div>';
+                        
+                        
+                    html1 += '<input class="form-control produktid" type="hidden" value="' + val.produktid + '">';
+                    html1 += '<input class="form-control panelid" type="hidden" value="' + i + '">';
+                        
+                    html1 += '<div class="row">';                        
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-12">&nbsp;</div>';
+                                            
+                    html1 += '<button class="btn btn-primary scroll" type="button" data-toggle="collapse" data-target="#collapsebes' + i + '" aria-expanded="false" aria-controls="collapseExample">';
+                    html1 += 'Beskrivelse';
+                    html1 += '</button>';
+                    html1 += '<button class="btn btn-primary scroll" type="button" data-toggle="collapse" data-target="#collapsespes' + i + '" aria-expanded="false" aria-controls="collapseExample">';
+                    html1 += 'Spesifikasjoner';
+                    html1 += '</button>';
+                    html1 += '<button class="btn btn-primary scroll" type="button" data-toggle="collapse" data-target="#collapsedim' + i + '" aria-expanded="false" aria-controls="collapseExample">';
+                    html1 += 'Dimensjoner';
+                    html1 += '</button>';
+                    
+                    html1 += '<div class="collapse" id="collapsebes' + i + '">';
+                    html1 += '<div class="card card-block">';
+                    html1 += '<div>Beskrivelse:</div>';
+                    html1 += '<div><textarea class="form-control hasChange beskrivelse" rows="5">' + val.produktbeskrivelse + '</textarea></div>';
+                    html1 += '</div>';
+                    html1 += '</div>';
+                    html1 += '<div class="collapse" id="collapsespes'+ i +'">';
+                    html1 += '<div class="card card-block">';
+                    $.each(produktltillegg, function (k, tillegg)
+                    {
+                        if (tillegg.produktid == val.produktid)
+                        {                                
+                            html1 += '<div class="col-sm-3">' + tillegg.tillegggruppe + ':<input class="form-control hasChange spes' + ' ' + tillegg.tillegggruppe + '"  name="' + tillegg.tillegggruppe + '" value="' + tillegg.tilleggtekst + '"></div>';
+                        }
+                       
+                            
+                    });
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-12"><i class="removespes glyphicon glyphicon-minus"></i><i class="addspes glyphicon glyphicon-plus"></i><p class="newspes"></p></div>';
+                    html1 += '</div>';                       
+                    html1 += '</div>';
+                    html1 += '</div>';
+                    html1 += '<div class="collapse" id="collapsedim' + i + '">';
+                    html1 += '<div class="card card-block">';
+                    html1 += '<div class="col-sm-3">Bredde:<input class="form-control hasChange bredde" value="' + val.produktbredde + '"></div><div class="col-sm-3">Høyde:<input class="form-control hasChange hoyde" value="' + val.produkthoyde + '"></div><div class="col-sm-3">Dybde:<input class="form-control hasChange dybde" value="' + val.produktdybde + '"></div><div class="col-sm-3">Vekt:<input class="form-control hasChange vekt" value="' + val.produktvekt + '"></div>';
+                    html1 += '</div>';
+                    html1 += '</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-12">&nbsp;</div>';
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-12">&nbsp;</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<button class="btn btn-lg btn-primary btn-block cmdLagreProdukt" type="submit"><b>Save </b><i class="fa fa-sign-in"></i></button>';
+                    html1 += '</div>';
+                    html1 += '</div>';
+                        
+                        
+                });
+                html1 += '</div>';
+                $("#produkt_visning").empty();
+                $("#produkt_visning").append(html1);                
+                $('.removespes').hide();
+                $(".accordion").accordion({
+                    collapsible: true,
+                    autoHeight: true,                    
+                    active: false
+                        
+                });
+                
+                if (panelid >= 0)
+                {
+                    $(".accordion").accordion('option', 'active', panelid);
+                    $('#collapsespes' + panelid).collapse('toggle');
+                }
+                
+                // led kontrol start 'h3'
+                $(".slidestatus").on('change', function ()
+                {
+                    var SelectedDIV = $(this).parents(".form-group");
+                    var HeaderDIV = $(this).parents('.form-group').prev('h3');
+                    var val = $(".slidestatus", SelectedDIV).val();                        
+                    if (val == "ja")
+                    {
+                        $(".ledslide", HeaderDIV).attr("src", "images/led_green.png");
+                    } else
+                    {
+                        $(".ledslide", HeaderDIV).attr("src", "images/led_red.png");
+                    }
+                });
+                $(".webstatus").on('change', function ()
+                {
+                    var SelectedDIV = $(this).parents(".form-group");
+                    var HeaderDIV = $(this).parents('.form-group').prev('h3');
+                    var val = $(".webstatus", SelectedDIV).val();
+                    if (val == "ja")
+                    {
+                        $(".ledweb", HeaderDIV).attr("src", "images/led_green.png");
+                    } else
+                    {
+                        $(".ledweb", HeaderDIV).attr("src", "images/led_red.png");
+                    }
+                });
+                $(".butikkstatus").on('change', function ()
+                {
+                    var SelectedDIV = $(this).parents(".form-group");
+                    var HeaderDIV = $(this).parents('.form-group').prev('h3');
+                    var val = $(".butikkstatus", SelectedDIV).val();
+                    if (val == "På lager")
+                    {
+                        $(".ledbutikk", HeaderDIV).attr("src", "images/led_green.png");
+                    }
+                    if (val == "Ikke på lager")
+                    {
+                        $(".ledbutikk", HeaderDIV).attr("src", "images/led_red.png");
+                    }
+                    if (val == "Ikke vis i butikk")
+                    {
+                        $(".ledbutikk", HeaderDIV).attr("src", "images/led_grey.png");
+                    }
+                });
+                $(".produktstatus").on('change', function ()
+                {
+                    var SelectedDIV = $(this).parents(".form-group");
+                    var HeaderDIV = $(this).parents('.form-group').prev('h3');
+                    var val = $(".produktstatus", SelectedDIV).val();
+                    if (val == "1")
+                    {
+                        $(".ledprodukt", HeaderDIV).attr("src", "images/led_green.png");
+                    } else
+                    {
+                        $(".ledprodukt", HeaderDIV).attr("src", "images/led_red.png");
+                    }
+                });
+
+                // led kontrol slutt 'h3'
+                $(".removespes").click(function ()
+                {
+                    var SelectedDIV = $(this).parents(".form-group");
+                    $("#newspesname", SelectedDIV).remove();
+                    $(".removespes", SelectedDIV).hide();
+                    $("#newspesval", SelectedDIV).remove();
+                    $(".cmdleggtilspes", SelectedDIV).remove();
+                    $(".addspes", SelectedDIV).show();
+                    $(".cmdLagreProdukt", SelectedDIV).show();
+
+                });
+                $(".addspes").click(function ()
+                {
+                    $(".form-group").animate({ scrollTop: $(document).height() }, "slow");
+                    var SelectedDIV = $(this).parents(".form-group");
+                    $(".addspes", SelectedDIV).hide();
+                    $(".cmdLagreProdukt", SelectedDIV).hide();
+                    $(".removespes", SelectedDIV).show();                        
+                    var produktid = $(".produktid", SelectedDIV).val();
+                        
+                    $("<input class='form-control' type='text' value='' />")
+                     .attr("id", "newspesname")
+                     .attr("placeholder", "Navn")
+                     .attr("name", "myfieldid")                     
+                     .attr("onkeydown", "upperCaseF(this)")
+                     .appendTo($(this).parent());
+                    $("<input class='form-control' type='text' value='' />")
+                     .attr("id", "newspesval")
+                     .attr("placeholder", "Spesifikasjon")
+                     .attr("name", "myfieldid")
+                     .appendTo($(this).parent());
+                    $("<button class='btn btn-xs btn-primary btn-block cmdleggtilspes'<b>Legg til </b><i class='fa fa-sign-in'></i></button>")
+                    .appendTo($(this).parent());
+                    $("#newspesname").focus();
+                    $(".cmdleggtilspes").click(function ()
+                    {
+                        var SelectedDIV = $(this).parents(".form-group");
+                        var panelid = $(".panelid", SelectedDIV).val();
+                        var newspesname = $("#newspesname", SelectedDIV).val();
+                        var newspesval = $("#newspesval", SelectedDIV).val();
+                        var knytteid = $(".produktid", SelectedDIV).val();
+                        var output = "knytteid=" + knytteid + "&newspesname=" + newspesname + "&newspesval=" + newspesval;
+                        $.ajaxSetup({ cache: false });
+                        $.ajax(
+                        {
+                            type: "POST",
+                            url: "api/spesifikasjoner.asp",
+                            data: output,
+                            dataType: 'json',
+                            async: true,
+                            cache: false,
+                            timeout: 100000,
+                            error: function ()
+                            {
+                                setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 2500);
+
+                            },
+                            success: function (responseText)
+                            {
+                                
+                                if (responseText.Transfer == "spesnameMangler")
+                                {
+                                    setTopsliderMessage("Spesifikasjons navn mangler", 2500);
+
+                                }
+                                if (responseText.Transfer == "ok")
+                                {
+                                    
+                                        hentprodukter(Number(panelid));
+                                                                      
+                                    
+                                }
+                            }
+
+
+
+                        });
+                        
+                        
+                        
+                    });
+                });
+                
+                $(".cmdLagreProdukt").click(function ()
+                {  
+                    var SelectedDIV = $(this).parents(".form-group");
+                    var produktid = $(".produktid", SelectedDIV).val();
+                    var beskrivelse = $(".beskrivelse", SelectedDIV).val();
+                    var bredde = $(".bredde", SelectedDIV).val();
+                    var hoyde = $(".hoyde", SelectedDIV).val();
+                    var dybde = $(".dybde", SelectedDIV).val();
+                    var vekt = $(".vekt", SelectedDIV).val();
+                    var slidestatus = $(".slidestatus", SelectedDIV).val();
+                    var webstatus = $(".webstatus", SelectedDIV).val();
+                    var butikkstatus = $(".butikkstatus", SelectedDIV).val();
+                    var status = $(".status", SelectedDIV).val();
+                    var pris = $(".pris", SelectedDIV).val();
+                    var _OutputElements = {};
+                    _OutputElements.produktid = produktid;
+                    _OutputElements.beskrivelse = beskrivelse;
+                    _OutputElements.bredde = bredde;
+                    _OutputElements.hoyde = hoyde;
+                    _OutputElements.dybde = dybde;
+                    _OutputElements.slidestatus = slidestatus;
+                    _OutputElements.webstatus = webstatus;
+                    _OutputElements.butikkstatus = butikkstatus;
+                    _OutputElements.status = status;
+                    _OutputElements.pris = pris;                       
+                        
+                    $('.spes', SelectedDIV).each(function (index, obj)
+                    {                            
+                        var name = $(this).attr("name");
+                        var val = $(this).attr("value");
+                        _OutputElements[name] = val;             
+                            
+                    });
+                    console.log(JSON.stringify(_OutputElements))
+
+                    removeTopsliderMessage();
+                    var SelectedINPUT = $(this).parents('.form-group').find('input');
+                    var SelectedSELECT = $(this).parents('.form-group').find('select');
+                    var SelectedTEXTAREA = $(this).parents('.form-group').find('textarea');
+                    
+                    console.log(SelectedINPUT);
+                    SelectedINPUT.css({ "background-color": "white" });
+                    SelectedSELECT.css({ "background-color": "white" });
+                    SelectedTEXTAREA.css({ "background-color": "white" });
+                                           
+                    hentprodukter();
+                        
+              
+                });                    
+                $('.hasChange').on('input', function ()
+                {
+                    var SelectedDIV = $(this)
+                    //var HeaderDIV = $(this).parents('.form-group').prev('h3');
+                    SelectedDIV.css({ "background-color": "lightblue" });
+                    //HeaderDIV.css({ "background-color": "lightblue" });
+                    $('.accordion h3').unbind('click');
+                    $('.accordion a').unbind('click');
+                    setTopsliderMessage("Skjema er ikke lagret", 0);
+                        
+                });
+                function upperCaseF(a)
+                {
+                    alert('kai');
+                    setTimeout(function ()
+                    {
+                        a.value = a.value.toUpperCase();
+                    }, 1);
+                }
+                $(".scroll").click(function ()
+                {
+                        
+                        
+                    //$("#scroll").ScrollTo();
+                    //$("#form-group").ScrollTo();
+                    //$("html, body").animate({ scrollTop: $(document).height() }, "slow");                        
+                    //$(".beskrivelse").animate({ scrollTop: $(document).height() }, "slow");
+                });
+            }
+        });
+             
+        
+            
+    }
+// -->
+    </script>
+    <style>
+        .col-centered {
+            float: none;
+            margin: 0 auto;
+        }
+        #logo {
+            margin-left: 60px;
+            margin-top: 20px;
+            display: block;            
+            margin-right: auto;
+        }
+        .main_window {
+            width: 98%;
+            margin-top: 80px;            
+            padding: 30px 30px 30px 30px;
+            background-color: #ebebeb;
+            border-radius: 35px;
+            box-shadow: 10px 10px 5px #d9d9d9;
+        }
+       .form-group{
+           height: 350px;
+       }
+       
+
+
+        
+    </style>
+</head>
+<body>    
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header page-scroll">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <img class="navbar-brand" src="/images/logo/aa_logo80X75.png">
+                    <a class="navbar-brand" href="#">ABRAHAMSEN AUDIO</a>                    
+                </div>
+                <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                    <ul class="nav navbar-nav">                        
+                        <li id ="activePortal" class="active portal"><a href="#">Portal</a></li>
+                        <li id ="activeMainMenu1"><a class="mainMenu1" href="#"></a></li>
+                        <li id ="activeMainMenu2"><a class="mainMenu2" href="#"></a></li>
+                        <li id ="activeMainMenu3"><a class="mainMenu3" href="#"></a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#"><span class="glyphicon glyphicon-user user"></span></a></li>
+                        <li><a id="cmdLoggut" href="#"><span class="glyphicon glyphicon-log-out logout"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    <div class="container">
+        <section id="portal" class="topp_index">
+            <div class="row">
+                <div class="main_window col-centered">
+                    
+                </div>
+            </div>
+        </section>
+        <section id="products" class="topp_index" hidden>
+                <div class="row">
+                    <div class="main_window col-centered">
+                        <div id="produkt_visning">
+
+                        </div>
+                    </div>
+                </div>
+</section>
+        <section id="customers" class="topp_index" hidden>
+            <div class="row">
+                <div class="main_window col-centered">
+                    <p>This is a visible paragraph.</p>
+                </div>
+            </div>
+        </section>
+        <section id="store" class="topp_index" hidden>
+            <div class="row">
+                <div class="main_window col-centered">
+                    <p>Her kommer butikk</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- Template -->
+    <link type="text/css" rel="stylesheet" href="/lib/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/lib/css/admin.css">
+
+    <!-- End Template -->
+</body>
+</html>
