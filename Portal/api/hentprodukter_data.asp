@@ -97,13 +97,24 @@ End Function
 			
 		Produktkategori.CursorType = 2
 		Produktkategori.LockType = 3
-		Produktkategori.Open strSQL, conn	
+		Produktkategori.Open strSQL, conn
+    
+        ProduktgruppeiId = rsprodukter("ProduktgruppeId")        
+		
+		Set Produktgruppe = Server.CreateObject("ADODB.Recordset")
+		strSQL = "SELECT * FROM tblProduktgruppe WHERE ProduktgruppeId = " & ProduktgruppeiId
+			
+		Produktgruppe.CursorType = 2
+		Produktgruppe.LockType = 3
+		Produktgruppe.Open strSQL, conn	
         	
 		
 		
 		strData = strData & "{""produkt"": """ & rsprodukter("Produkt") & ""","
         strData = strData & """produktid"": """ & rsprodukter("Produktid") & ""","
+        strData = strData & """regdato"": """ & rsprodukter("RegDato") & ""","
         strData = strData & """produktkategori"": """ & Produktkategori("Produktkategori") & ""","
+        strData = strData & """produktgruppe"": """ & Produktgruppe("Produktgruppe") & ""","
         strData = strData & """produktbredde"": """ & rsprodukter("Bredde") & ""","	
         strData = strData & """produkthoyde"": """ & rsprodukter("Hoyde") & ""","
         strData = strData & """produktdybde"": """ & rsprodukter("Dybde") & ""","
@@ -116,10 +127,11 @@ End Function
 		strData = strData & """status"": """ & rsprodukter("Status") & """},"
 		
 		Set Produktkategori = Nothing
+        Set Produktgruppe = Nothing
         
 	rsprodukter.MoveNext
 	Loop
-	strSQL = "SELECT KnyttetId, TilleggGruppe, TilleggTekst"
+	strSQL = "SELECT TilleggId, KnyttetId, TilleggGruppe, TilleggTekst"
     strSQL = strSQL & " FROM tblTillegg"
     strSQL = strSQL & " WHERE TilleggType = 'produkt'"
     strSQL = strSQL & " ORDER BY KnyttetId, TilleggGruppe"
@@ -127,7 +139,7 @@ End Function
 
     Do While NOT rsProduktTillegg.EOF
 				
-	    produkttilleggdata = produkttilleggdata & "{""produktid"": """ & rsProduktTillegg("KnyttetId") & """,""tillegggruppe"": """ & rsProduktTillegg("TilleggGruppe") & ""","
+	    produkttilleggdata = produkttilleggdata & "{""TilleggId"": """ & rsProduktTillegg("TilleggId") & """,""produktid"": """ & rsProduktTillegg("KnyttetId") & """,""tillegggruppe"": """ & rsProduktTillegg("TilleggGruppe") & ""","
 	    produkttilleggdata = produkttilleggdata & """tilleggtekst"": """ & ReplaceBadChar(rsProduktTillegg("TilleggTekst")) & """},"
 			
     rsProduktTillegg.MoveNext

@@ -10,7 +10,7 @@
     <meta name="apple-touch-fullscreen" content="yes" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="format-detection" content="email=no" />
-    <title>ABRAHAMSEN AUDIO PORTAL</title>
+    <title>PORTAL - ABRAHAMSEN AUDIO</title>
     <script type="text/javascript" src="Scripts/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="/lib/js/jquery_ajaxupload.js"></script>
     <script type="text/javascript" src="/lib/js/functionlib.js"></script>
@@ -24,7 +24,7 @@
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link href="Content/font-awesome.min.css" rel="stylesheet" />
-    <link href="Content/bootstrap.min.css" rel="stylesheet" />    
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
     <link href="Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
@@ -34,34 +34,55 @@
     var languages = null;
     var TopSliderInterval;
     var clickrobot = "0";
+    var mode = "test1";
+    var languages = {
+        "lang":
+           {
+               "english": {
+                   "logout": "Logout",
+                   "mainMenu1": "Products",
+                   "mainMenu2": "Goods",
+                   "mainMenu3": "Customers",
+                   "mainMenu4": "Store",
+                   "labelItemNo": "Item#",
+                   "labelItemId": "Item ID",
+                   "labelDescription": "Description",
+                   "labelQty": "QTY",
+                   "labelSupplier": "Supplier",
+                   "labelEdit": "Edit",
+                   "labelStatus": "Status",
+                   "labelDelete": "Delete",
+                   "cmdAddNewItem": "New Item"
+               },
+               "norsk": {
+                   "logout": "LoggUt",
+                   "mainMenu1": "Produkter",
+                   "mainMenu2": "Varelager",
+                   "mainMenu3": "Kunder",
+                   "mainMenu4": "Butikk",
+                   "labelItemNo": "Artikkel#",
+                   "labelItemId": "Artikkel-ID",
+                   "labelDescription": "Beskrivelse",
+                   "labelQty": "Antall",
+                   "labelSupplier": "Leverandør",
+                   "labelEdit": "Rediger",
+                   "labelStatus": "Status",
+                   "labelDelete": "Slett",
+                   "cmdAddNewItem": "Ny Artikkel"
+               }
+           }
+    };
     if (!localStorage.bruker || localStorage.bruker == "")
     {
         window.location.href = "/login.html";
     }
     $(document).ready(function()
     {
-        languages = {
-            "lang":
-               {
-                   "english": {
-                       "logout": "Logout",
-                       "mainMenu1": "Products",
-                       "mainMenu2": "Customers",
-                       "mainMenu3": "Store"
-                   },
-                   "norsk": {
-                       "logout": "LoggUt",
-                       "mainMenu1": "Produkter",
-                       "mainMenu2": "Kunder",
-                       "mainMenu3": "Butikk"
-                   }
-               }
-        };
         adjustStyle($(this).width());
         $(window).resize(function ()
         {
             adjustStyle($(this).width());
-        });        
+        });
         $("#cmdLoggut").click(function () { loggut(); });
         $(".portal").click(function ()
         {
@@ -78,7 +99,7 @@
             {
                 $(".navbar-toggle").click();
             }
-            
+
         });
         $(".mainMenu1").click(function ()
         {
@@ -89,26 +110,75 @@
             } else
             {
                 $("#activeMainMenu1").addClass("active");
-
+                hentprodukter();
             }
-            hentprodukter();
+
         });
-            
-        $(".mainMenu2").click(function ()
+        $(".mainMenu2").click(function()
         {
-            changeVisibility('customers');
+            changeVisibility('varer');
             if ($("#activeMainMenu2").hasClass("active"))
             {
                 $("#activeMainMenu2").removeClass("active");
             } else
             {
                 $("#activeMainMenu2").addClass("active");
-
             }
+            $.ajaxSetup({ cache: false });
+            $.ajax(
+            {
+                type: "POST",
+                url: "api/hentprodukter_data.asp",
+                dataType: 'json',
+                async: true,
+                cache: false,
+                timeout: 100000,
+                error: function()
+                {
+                    setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 2500);
+
+                },
+                success: function(responseText)
+                {
+                    _HTML = "";
+                    produktliste = responseText.produkt;
+                    produktltillegg = responseText.produkttillegg;
+                    $.each(produktliste, function(i, val)
+                    {
+                        _HTML += '<tr data-userid="' + val.produktid + '" class="tablesorter_tr trEdit">';
+                        _HTML += '<td width="10px"></td>';
+                        _HTML += '<td width="60px"><div class="img-avatar"><i class="fa fa-user fa-2x fa-fw" style="color: #A0A0A0; margin-top: 2px; margin-left: -1px;"></i></div></td>';
+                        _HTML += '<td width="20px"></td>';
+                        _HTML += '<td width="100px">' + val.produktid + '</td>';
+                        _HTML += '<td width="20px"></td>';
+                        _HTML += '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + val.produkt + ', ' + val.produktkategori + '</td>';
+                        _HTML += '<td width="20px"></td>';
+                        _HTML += '<td width="120px" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + val.produktgruppe + '</td>';
+                        _HTML += '<td width="20px"></td>';
+                        _HTML += '<td width="120px" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + val.regdato + '</td>';
+                        _HTML += '<td width="20px"></td>';
+                        _HTML += '<td width="120px" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + val.slidestatus + '</td>';
+                        _HTML += '<td width="20px"></td>';
+                        _HTML += '<td width="60px"><button data-userid="' + val.produktid + '" type="button" class="btn btn-success btn-xs btn-shadow btn-block fau-all-visibility-hidden cmdEdit"><i class="fa fa-pencil-square-o fa-lg fa-fw"></i></button></td>';
+                        _HTML += '<td width="5px"></td>';
+                        _HTML += '<td width="60px"><button data-userid="' + val.produktid + '" type="button" class="btn btn-success btn-xs btn-shadow btn-block fau-all-visibility-hidden cmdStatus"><i class="fa fa-chevron-down fa-lg fa-fw"></i></button></td>';
+                        _HTML += '<td width="5px"></td>';
+                        _HTML += '<td width="60px"><button data-userid="' + val.produktid + '" type="button" class="btn btn-danger btn-xs btn-shadow btn-block fau-all-visibility-hidden cmdDelete"><i class="fa fa-trash fa-lg fa-fw"></i></button></td>';
+                        _HTML += '<td width="10px"></td>';
+                        _HTML += '</tr>';
+                    });
+                    $("#gridTable").append(_HTML);
+                    setTableSorterMouseOver(true);
+                    setGridFunctions("#frmReg");
+                }
+
+
+            });
         });
+
         $(".mainMenu3").click(function ()
         {
-            changeVisibility('store');
+            changeVisibility('customers');
             if ($("#activeMainMenu3").hasClass("active"))
             {
                 $("#activeMainMenu3").removeClass("active");
@@ -116,28 +186,137 @@
             {
                 $("#activeMainMenu3").addClass("active");
 
+
             }
         });
+        $(".mainMenu4").click(function ()
+        {
+            changeVisibility('store');
+            if ($("#activeMainMenu4").hasClass("active"))
+            {
+                $("#activeMainMenu4").removeClass("active");
+            } else
+            {
+                $("#activeMainMenu4").addClass("active");
 
+            }
+        });
+        $('#produktModal').on('show.bs.modal', function (event)
+        {
+
+            setTimeout(function ()
+            {
+                $('#produktnavn').focus();
+            }, 500);
+
+            $(".accordion").accordion({
+                collapsible: true,
+                heightStyle: "content",
+                navigation: true,
+                active: false
+
+            });
+
+            $.ajaxSetup({ cache: false });
+            $.ajax(
+            {
+                type: "POST",
+                url: "api/hentproduktinfo_data.asp",
+                dataType: 'json',
+                async: true,
+                cache: false,
+                timeout: 100000,
+                error: function ()
+                {
+                    setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 2500);
+
+                },
+                success: function (responseText)
+                {
+                    var html2 = "";
+                    $("#produktkategorigruppe").empty();
+                    produktgruppe = responseText.produktgruppe;
+                    produktkategori = responseText.produktkategori;
+                    html2 += '<div class="row">';
+                    html2 += '<div class="col-sm-12">&nbsp;</div>';
+                    html2 += '</div>';
+                    html2 += '<div class="row">';
+                    html2 += '<label for="produktkategori" class="col-sm-6 form-control-label">Produktkategori:</label><label for="produktgruppe" class="col-sm-6 form-control-label">Produktgruppe:</label>';
+                    html2 += '</div>';
+                    html2 += '<div class="row">';
+                    html2 += '<div class="col-sm-6">';
+                    html2 += '<select id="produktkategoriid" class="form-control col-sm-12">';
+                    html2 += '<option value="99" selected="true" disabled>Velg...</option>';
+                    $.each(produktkategori, function (i, val)
+                    {
+                            html2 += '<option value="' + val.ProduktkategoriId + '">' + val.Produktkategori + '</option>';
+                    });
+                    html2 += '</select>';
+                    html2 += '</div>';
+
+                    html2 += '<div class="col-sm-6">';
+                    html2 += '<select id="produktgruppeid" class="form-control col-sm-12">';
+                    html2 += '<option value="99" selected="true" disabled>Velg...</option>';
+                    $.each(produktgruppe, function (i, val)
+                    {
+
+                        html2 += '<option value="' + val.ProduktgruppeId + '">' + val.Produktgruppe + '</option>';
+                    });
+                    html2 += '</select>';
+                    html2 += '</div>';
+                    html2 += '</div>';
+                    $("#produktkategorigruppe").append(html2);
+
+                }
+
+
+            });
+
+        })
         langactive = localStorage.langactiveLocal;
-        var user = localStorage.fornavn + localStorage.etternavn; 
+        var user = localStorage.fornavn + localStorage.etternavn;
         $('.user').text(user);
         $('.logout').text(languages.lang[langactive].logout);
         $('.mainMenu1').text(languages.lang[langactive].mainMenu1);
         $('.mainMenu2').text(languages.lang[langactive].mainMenu2);
         $('.mainMenu3').text(languages.lang[langactive].mainMenu3);
-        //Statestikk begin        
-                      
+        $('.mainMenu4').text(languages.lang[langactive].mainMenu4);
+        $('#labelItemNo').text(languages.lang[langactive].labelItemNo);
+        $('#labelItemId').text(languages.lang[langactive].labelItemId);
+        $('.labelDescription').text(languages.lang[langactive].labelDescription);
+        $('#labelQty').text(languages.lang[langactive].labelQty);
+        $('#labelSupplier').text(languages.lang[langactive].labelSupplier);
+        $('#labelEdit').text(languages.lang[langactive].labelEdit);
+        $('#labelStatus').text(languages.lang[langactive].labelStatus);
+        $('#labelDelete').text(languages.lang[langactive].labelDelete);
+        $('#cmdAddNewItem').text(languages.lang[langactive].cmdAddNewItem);
 
+        //Statestikk begin
+        $.ajaxSetup({ cache: false });
+        $.ajax(
+        {
+            type: "POST",
+            url: "api/static_data.asp",
+            dataType: 'json',
+            async: true,
+            cache: false,
+            timeout: 100000,
+            error: function ()
+            {
+                setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 2500);
+
+            },
+            success: function (responseText)
+            {
                 $('.main_window').highcharts({
                     chart: {
                         type: 'column'
                     },
                     title: {
-                        text: 'Antall Pr Uke'
+                        text: 'Produkt Status'
                     },
                     xAxis: {
-                        categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                        categories: ['Produkter', 'Store', 'Hjemme side', 'Kunder', 'I ordre']
                     },
 
                     plotOptions: {
@@ -150,12 +329,15 @@
                     },
 
                     series: [{
-                        data: [29.9, 71.5, 106.4, 129.2, 111]
+                        data: eval("["+responseText.antallProdukter +", 25, 28.4, 32.2, 45]")
                     }]
                 });
-           
+            }
+        });
+
             //Statestikk end
-    });
+    });// Document ready end
+
     Math.easeOutBounce = function (pos)
     {
         if ((pos) < (1 / 2.75))
@@ -203,12 +385,82 @@
         localStorage.removeItem('brukertype');
         localStorage.removeItem('etternavn');
         localStorage.removeItem('fornavn');
-        localStorage.removeItem('status');        
+        localStorage.removeItem('status');
         window.location.href = "/login.html";
     }
+    function slettTillegg(tilleggid, SelectedDIV)
+    {
+
+        var output = "tilleggid=" + tilleggid;
+        $.ajaxSetup({ cache: false });
+        $.ajax(
+        {
+            type: "POST",
+            url: "api/slett_spesifikasjoner.asp",
+            data: output,
+            dataType: 'json',
+            async: true,
+            cache: false,
+            timeout: 100000,
+            error: function ()
+            {
+                setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 2500);
+
+            },
+            success: function (responseText)
+            {
+
+                if (responseText.Transfer == "slettok")
+                {
+                    setTopsliderMessage("Spesifikasjon slettet", 2500);
+
+                }
+            }
+
+
+
+        });
+    }
+    function adjustStyle(width)
+    {
+        if (mode == "test")
+        {
+            $("body").append("<div id=\"div-window-size\" style=\"position: fixed; z-index: 499999; top: 0; left: 0; width: 100%; height: 20px; text-align: center;\"></div>")
+        }
+        width = parseInt(width);
+        if (width >= 1200)
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/lg.css");
+            $("#div-window-size").css({ "background-color": "#FF0000" }).text("lg.css");
+            $('.ledtekst').show();
+            $('.led').show();
+        }
+        else if (width >= 992 && width < 1200)
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/md.css");
+            $("#div-window-size").css({ "background-color": "#428bca" }).text("md.css");
+            $('.ledtekst').show();
+            $('.led').show();
+        }
+        else if (width >= 768 && width < 991)
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/sm.css");
+            $("#div-window-size").css({ "background-color": "#f0ad4e" }).text("sm.css");
+            $('.ledtekst').hide();
+            $('.led').hide();
+        }
+        else
+        {
+            $("#size-stylesheet").attr("href", "/lib/css/xs.css");
+            $("#div-window-size").css({ "background-color": "#5cb85c" }).text("xs.css");
+            $('.ledtekst').hide();
+            $('.led').hide();
+        }
+    }
+
     function hentprodukter(panelid)
     {
-        
+
         $.ajaxSetup({ cache: false });
         $.ajax(
         {
@@ -221,8 +473,8 @@
             timeout: 100000,
             error: function ()
             {
-                setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 1000);	
-                 
+                setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 1000);
+
             },
             success: function (responseText)
             {
@@ -234,9 +486,11 @@
                 var webstatustxt;
                 var slidestatus;
                 var slidestatustxt;
-                var html1 = '<div class="accordion">';                   
+
+                var html1 = '<div class="accordion">';
+
                 produktliste = responseText.produkt;
-                produktltillegg = responseText.produkttillegg;                    
+                produktltillegg = responseText.produkttillegg;
                 $.each(produktliste, function (i, val)
                 {
                     if (val.status == 0)
@@ -281,26 +535,33 @@
                         slidestatus = "red";
                         slidestatustxt = "ikke vis i slider";
                     }
-                        
-                    html1 += '<h3 class="header" id = "scroll"><div class="col-sm-2">' + val.produkt + '</div><div class="col-sm-5">' + val.produktkategori + '</div><div class="col-sm-1"><img class="ledslide" src="images/led_' + slidestatus + '.png" title="' + slidestatustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"><img class="ledweb" src="images/led_' + webstatus + '.png" title="' + webstatustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"><img class="ledbutikk" src="images/led_' + butikkstatus + '.png" title="' + butikkstatustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"><img class="ledprodukt"src="images/led_' + status + '.png" title="' + statustxt + '" width="17px" height="17px"/></div><div class="col-sm-1"></div></h3>';
-                        
+
+                    html1 += '<h3 class="header" id = "scroll"><div class="col-md-2 textleft">' + val.produkt + '</div><div class="col-md-5 textleft">' + val.produktkategori + '</div><div class="col-md-1"><img class="ledslide center led" src="images/led_' + slidestatus + '.png" title="' + slidestatustxt + '" width="17px" height="17px"/></div><div class="col-md-1"><img class="ledweb center led" src="images/led_' + webstatus + '.png" title="' + webstatustxt + '" width="17px" height="17px"/></div><div class="col-md-1"><img class="ledbutikk center led" src="images/led_' + butikkstatus + '.png" title="' + butikkstatustxt + '" width="17px" height="17px"/></div><div class="col-md-1"><img class="ledprodukt center led"src="images/led_' + status + '.png" title="' + statustxt + '" width="17px" height="17px"/></div><div class="col-md-1"></div></h3>';
+
                     html1 += '<div class="form-group">';
-                    html1 += '<div class="col-sm-2">Reklame slider:</div><div class="col-sm-2">Vis på Web:</div><div class="col-sm-2">Butikkstatus:</div><div class="col-sm-2">Produktstatus:</div><div class="col-sm-4">Pris:</div>';
-                    html1 += '<div class="col-sm-2">';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-6">Produktgruppe: ' + val.produktgruppe + '</div>';
+                    html1 += '<div class="col-sm-6">Opprettet: ' + val.regdato + '</div>';
+                    html1 += '</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-12"><hr></div>';
+                    html1 += '</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-2">Reklame slider:';
                     html1 += '<select class="form-control hasChange col-sm-12 slidestatus">';
                     html1 += '<option selected>' + val.slidestatus + '</option>';
                     html1 += '<option value="ja">ja</option>';
                     html1 += '<option value="nei">nei</option>';
                     html1 += '</select>';
                     html1 += '</div>';
-                    html1 += '<div class="col-sm-2">';
+                    html1 += '<div class="col-sm-2">Vis på Web:';
                     html1 += '<select class="form-control hasChange col-sm-12 webstatus">';
                     html1 += '<option selected>' + val.webstatus + '</option>';
-                    html1 += '<option value="1">ja</option>';
-                    html1 += '<option value="2">nei</option>';
+                    html1 += '<option value="ja">ja</option>';
+                    html1 += '<option value="nei">nei</option>';
                     html1 += '</select>';
                     html1 += '</div>';
-                    html1 += '<div class="col-sm-2">';
+                    html1 += '<div class="col-sm-2">Butikkstatus:';
                     html1 += '<select class="form-control hasChange col-sm-12 butikkstatus">';
                     html1 += '<option selected>' + butikkstatustxt + '</option>';
                     html1 += '<option value="På lager">På lager</option>';
@@ -308,60 +569,85 @@
                     html1 += '<option value="Ikke vis i butikk">Ikke vis i butikk</option>';
                     html1 += '</select>';
                     html1 += '</div>';
-                    html1 += '<div class="col-sm-2">';
+                    html1 += '<div class="col-sm-2">Produktstatus:';
                     html1 += '<select class="form-control hasChange col-sm-12 produktstatus">';
                     html1 += '<option selected>' + statustxt + '</option>';
                     html1 += '<option value="1">På</option>';
                     html1 += '<option value="2">Av</option>';
                     html1 += '</select>';
                     html1 += '</div>';
-                    html1 += '<div class="col-sm-2">';
+                    html1 += '<div class="col-sm-2">Pris:';
                     html1 += '<input class="form-control col-sm-12 hasChange pris" value="' + val.pris + '">';
                     html1 += '</div>';
-                        
-                        
-                    html1 += '<input class="form-control produktid" type="hidden" value="' + val.produktid + '">';
-                    html1 += '<input class="form-control panelid" type="hidden" value="' + i + '">';
-                        
-                    html1 += '<div class="row">';                        
                     html1 += '</div>';
+
+                    html1 += '<input class="form-control produktid" id="produktid" name="produktid" type="hidden" value="' + val.produktid + '">';
+                    html1 += '<input class="form-control panelid" type="hidden" value="' + i + '">';
+
+                    html1 += '<div class="row">';
                     html1 += '<div class="col-sm-12">&nbsp;</div>';
-                                            
-                    html1 += '<button class="btn btn-primary scroll" type="button" data-toggle="collapse" data-target="#collapsebes' + i + '" aria-expanded="false" aria-controls="collapseExample">';
-                    html1 += 'Beskrivelse';
-                    html1 += '</button>';
-                    html1 += '<button class="btn btn-primary scroll" type="button" data-toggle="collapse" data-target="#collapsespes' + i + '" aria-expanded="false" aria-controls="collapseExample">';
-                    html1 += 'Spesifikasjoner';
-                    html1 += '</button>';
-                    html1 += '<button class="btn btn-primary scroll" type="button" data-toggle="collapse" data-target="#collapsedim' + i + '" aria-expanded="false" aria-controls="collapseExample">';
-                    html1 += 'Dimensjoner';
-                    html1 += '</button>';
-                    
+                    html1 += '</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-12"><hr></div>';
+                    html1 += '</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-4">'
+                    html1 += '<button class="btn-block tilleggKnapp scroll besknapp" type="button" data-toggle="collapse" data-target="#collapsebes' + i + '" aria-expanded="false" aria-controls="collapseExample">';
+                    html1 += 'Beskrivelse   ';
+                    html1 += '<span class="glyphicon glyphicon-plus besicon"></span></button>';
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-4">'
+                    html1 += '<button class="btn-block tilleggKnapp scroll spesknapp" type="button" data-toggle="collapse" data-target="#collapsespes' + i + '" aria-expanded="false" aria-controls="collapseExample">';
+                    html1 += 'Spesifikasjoner   ';
+                    html1 += '<span class="glyphicon glyphicon-plus spesicon"></span></button>';
+                    html1 += '</div>';
+                    html1 += '<div class="col-sm-4">'
+                    html1 += '<button class="btn-block tilleggKnapp scroll dimknapp" type="button" data-toggle="collapse" data-target="#collapsedim' + i + '" aria-expanded="false" aria-controls="collapseExample">';
+                    html1 += 'Dimensjoner   ';
+                    html1 += '<span class="glyphicon glyphicon-plus dimicon"></span></button>';
+                    html1 += '</div>';
+                    html1 += '</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-12"><hr></div>';
+                    html1 += '</div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-12">&nbsp;</div>';
+                    html1 += '</div>';
+
                     html1 += '<div class="collapse" id="collapsebes' + i + '">';
                     html1 += '<div class="card card-block">';
                     html1 += '<div>Beskrivelse:</div>';
-                    html1 += '<div><textarea class="form-control hasChange beskrivelse" rows="5">' + val.produktbeskrivelse + '</textarea></div>';
+                    html1 += '<div><textarea class="form-control hasChange beskrivelse" rows="7">' + val.produktbeskrivelse + '</textarea></div>';
                     html1 += '</div>';
                     html1 += '</div>';
                     html1 += '<div class="collapse" id="collapsespes'+ i +'">';
                     html1 += '<div class="card card-block">';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-3 deletediv"><a href="#"><img class="deleteimage" title="" src="/images/Delete_Icon.png" height="30" width="35"></a></div>';
+                    html1 += '</div>';
+                    html1 += '<div id="tilleggblokk">';
                     $.each(produktltillegg, function (k, tillegg)
                     {
                         if (tillegg.produktid == val.produktid)
-                        {                                
-                            html1 += '<div class="col-sm-3">' + tillegg.tillegggruppe + ':<input class="form-control hasChange spes' + ' ' + tillegg.tillegggruppe + '"  name="' + tillegg.tillegggruppe + '" value="' + tillegg.tilleggtekst + '"></div>';
+                        {
+
+                            html1 += '<div class="col-lg-3 tilleggrad">' + tillegg.tillegggruppe + '<a href="#"><img class="spesimage" title="Slette ' + tillegg.tillegggruppe + '?" src="/images/red-x-icon-th.png" height="12" width="12"></a><input class="form-control hasChange spes"  id="' + tillegg.TilleggId + '" value="' + tillegg.tilleggtekst + '">';
+                            html1 += '<input class="form-control spes tilleggid" type="hidden" value="' + tillegg.TilleggId + '"></div>';
                         }
-                       
-                            
+
                     });
+                    html1 += '</div>';
                     html1 += '<div class="row">';
-                    html1 += '<div class="col-sm-12"><i class="removespes glyphicon glyphicon-minus"></i><i class="addspes glyphicon glyphicon-plus"></i><p class="newspes"></p></div>';
-                    html1 += '</div>';                       
+                    html1 += '<div class="col-sm-12"><a href="#"><i class="removespes glyphicon glyphicon-minus"></i><i class="addspes glyphicon glyphicon-plus"></i><p class="newspes"></p></a></div>';
+                    html1 += '</div>';
                     html1 += '</div>';
                     html1 += '</div>';
                     html1 += '<div class="collapse" id="collapsedim' + i + '">';
                     html1 += '<div class="card card-block">';
                     html1 += '<div class="col-sm-3">Bredde:<input class="form-control hasChange bredde" value="' + val.produktbredde + '"></div><div class="col-sm-3">Høyde:<input class="form-control hasChange hoyde" value="' + val.produkthoyde + '"></div><div class="col-sm-3">Dybde:<input class="form-control hasChange dybde" value="' + val.produktdybde + '"></div><div class="col-sm-3">Vekt:<input class="form-control hasChange vekt" value="' + val.produktvekt + '"></div>';
+                    html1 += '<div class="row">';
+                    html1 += '<div class="col-sm-12">&nbsp;</div>';
+                    html1 += '</div>';
                     html1 += '</div>';
                     html1 += '</div>';
                     html1 += '<div class="row">';
@@ -369,35 +655,70 @@
                     html1 += '</div>';
                     html1 += '<div class="col-sm-12">&nbsp;</div>';
                     html1 += '<div class="row">';
-                    html1 += '<button class="btn btn-lg btn-primary btn-block cmdLagreProdukt" type="submit"><b>Save </b><i class="fa fa-sign-in"></i></button>';
+                    html1 += '<button class="btn btn-lg btn-primary btn-block cmdLagreProdukt" type="submit"><b>Lagre </b><i class="fa fa-sign-in"></i></button>';
                     html1 += '</div>';
                     html1 += '</div>';
-                        
-                        
+
+
                 });
                 html1 += '</div>';
                 $("#produkt_visning").empty();
-                $("#produkt_visning").append(html1);                
+                $("#produkt_visning").append(html1);
                 $('.removespes').hide();
+                $('.spesimage').hide();
+                $(".tilleggrad").draggable({
+                    revert: function (event, ui)
+                    {
+                        $(this).data("uiDraggable").originalPosition = {
+                            top: 0,
+                            left: 0
+                        };
+                        return !event;
+                }
+                });
+                $('.deletediv').droppable({
+                    drop: function (event, ui)
+                    {
+                        var tilleggid = ui.draggable.find("input[type=hidden]").val();
+                        $(this).css("background-color", "white");
+                        $(ui.draggable).remove();
+                        slettTillegg(tilleggid);
+                    },
+                    over: function()
+                    {
+                        $(this).css("background-color", "red");
+                    },
+                    out: function ()
+                    {
+                        $(this).css("background-color", "white");
+                    }
+
+                });
                 $(".accordion").accordion({
                     collapsible: true,
-                    autoHeight: true,                    
+                    heightStyle: "content",
+                    navigation: true,
                     active: false
-                        
+
                 });
-                
+
+
+
                 if (panelid >= 0)
                 {
                     $(".accordion").accordion('option', 'active', panelid);
                     $('#collapsespes' + panelid).collapse('toggle');
+                    var SelectedDIV = $('#collapsespes' + panelid).parents(".form-group");
+                    $(".spesknapp", SelectedDIV).toggleClass('ButtonClicked');
+                    $(".spesicon", SelectedDIV).toggleClass("glyphicon glyphicon-plus glyphicon glyphicon-minus");
                 }
-                
+
                 // led kontrol start 'h3'
                 $(".slidestatus").on('change', function ()
                 {
                     var SelectedDIV = $(this).parents(".form-group");
                     var HeaderDIV = $(this).parents('.form-group').prev('h3');
-                    var val = $(".slidestatus", SelectedDIV).val();                        
+                    var val = $(".slidestatus", SelectedDIV).val();
                     if (val == "ja")
                     {
                         $(".ledslide", HeaderDIV).attr("src", "images/led_green.png");
@@ -452,6 +773,38 @@
                 });
 
                 // led kontrol slutt 'h3'
+                $(".besknapp").click(function ()                {
+
+                    var SelectedDIV = $(this).parents(".form-group");
+                    $(".besknapp", SelectedDIV).toggleClass('ButtonClicked');
+                    $(".besicon", SelectedDIV).toggleClass("glyphicon glyphicon-plus glyphicon glyphicon-minus");
+                });
+                $(".spesknapp").click(function ()
+                {
+
+                    var SelectedDIV = $(this).parents(".form-group");
+                    $(".spesknapp", SelectedDIV).toggleClass('ButtonClicked');
+                    $(".spesicon", SelectedDIV).toggleClass("glyphicon glyphicon-plus glyphicon glyphicon-minus");
+                });
+                $(".dimknapp").click(function ()
+                {
+
+                    var SelectedDIV = $(this).parents(".form-group");
+                    $(".dimknapp", SelectedDIV).toggleClass('ButtonClicked');
+                    $(".dimicon", SelectedDIV).toggleClass("glyphicon glyphicon-plus glyphicon glyphicon-minus");
+                });
+                $(".deleteimage").click(function ()
+                {
+                    $('.spesimage').toggle();
+                });
+                $(".spesimage").click(function ()   //Slette tilleggs rad
+                {
+                    var SelectedDIV = $(this).parents(".tilleggrad");
+                    var tilleggid = $(".tilleggid", SelectedDIV).val();
+                    $(SelectedDIV).remove();
+                    slettTillegg(tilleggid);
+
+                });
                 $(".removespes").click(function ()
                 {
                     var SelectedDIV = $(this).parents(".form-group");
@@ -469,14 +822,13 @@
                     var SelectedDIV = $(this).parents(".form-group");
                     $(".addspes", SelectedDIV).hide();
                     $(".cmdLagreProdukt", SelectedDIV).hide();
-                    $(".removespes", SelectedDIV).show();                        
+                    $(".removespes", SelectedDIV).show();
                     var produktid = $(".produktid", SelectedDIV).val();
-                        
+
                     $("<input class='form-control' type='text' value='' />")
                      .attr("id", "newspesname")
                      .attr("placeholder", "Navn")
-                     .attr("name", "myfieldid")                     
-                     .attr("onkeydown", "upperCaseF(this)")
+                     .attr("name", "myfieldid")
                      .appendTo($(this).parent());
                     $("<input class='form-control' type='text' value='' />")
                      .attr("id", "newspesval")
@@ -492,13 +844,13 @@
                         var panelid = $(".panelid", SelectedDIV).val();
                         var newspesname = $("#newspesname", SelectedDIV).val();
                         var newspesval = $("#newspesval", SelectedDIV).val();
-                        var knytteid = $(".produktid", SelectedDIV).val();
+                        var knytteid = $("#produktid", SelectedDIV).val();
                         var output = "knytteid=" + knytteid + "&newspesname=" + newspesname + "&newspesval=" + newspesval;
                         $.ajaxSetup({ cache: false });
                         $.ajax(
                         {
                             type: "POST",
-                            url: "api/spesifikasjoner.asp",
+                            url: "api/ny_spesifikasjoner.asp",
                             data: output,
                             dataType: 'json',
                             async: true,
@@ -507,11 +859,10 @@
                             error: function ()
                             {
                                 setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 2500);
-
                             },
                             success: function (responseText)
                             {
-                                
+
                                 if (responseText.Transfer == "spesnameMangler")
                                 {
                                     setTopsliderMessage("Spesifikasjons navn mangler", 2500);
@@ -519,24 +870,88 @@
                                 }
                                 if (responseText.Transfer == "ok")
                                 {
-                                    
+                                        setTopsliderMessage("Spesifikasjon opprettet", 2500);
                                         hentprodukter(Number(panelid));
-                                                                      
-                                    
+
+
+
                                 }
                             }
 
 
 
                         });
-                        
-                        
-                        
+
+
+
                     });
                 });
-                
+                $("#cmdnyttprodukt").click(function ()
+                {
+                    $("#cmdnyttprodukt").attr('disabled', 'disabled');
+                    var produktgruppeid = $("#produktgruppeid").val();
+                    var produktkategoriid = $("#produktkategoriid").val();
+                    var produkt = $("#produktnavn").val();
+                    var output = "produkt=" + produkt + "&produktgruppeid=" + produktgruppeid + "&produktkategoriid=" + produktkategoriid;
+                    $.ajaxSetup({ cache: false });
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: "api/nytt_produkt.asp",
+                        data: output,
+                        dataType: 'json',
+                        async: true,
+                        cache: false,
+                        timeout: 100000,
+                        error: function ()
+                        {
+                            setTopsliderMessage("Error1, Noe gikk galt, prøv igjen", 2500);
+
+                        },
+                        success: function (responseText)
+                        {
+
+                            if (responseText.Transfer == "produktnameMangler")
+                            {
+                                setTopsliderMessage("Produktnavn mangler", 2500);
+                                $("#cmdnyttprodukt").removeAttr('disabled');
+                                $('#produktnavn').focus();
+
+
+                            }
+                            if (responseText.Transfer == "kategoriidMangler")
+                            {
+                                setTopsliderMessage("Produktkategori mangler", 2500);
+                                $("#cmdnyttprodukt").removeAttr('disabled');
+                                $('#produktkategoriid').focus();
+
+                            }
+                            if (responseText.Transfer == "gruppeidMangler")
+                            {
+                                setTopsliderMessage("Produktgruppe mangler", 2500);
+                                $("#cmdnyttprodukt").removeAttr('disabled');
+                                $('#produktgruppeid').focus();
+
+                            }
+                            if (responseText.Transfer == "ok")
+                            {
+
+                                $("#produktnavn").val("");
+                                $('#produktModal').modal('hide');
+                                setTopsliderMessage("Produkt opprettet", 3500);
+                                $("#cmdnyttprodukt").removeAttr('disabled');
+                                hentprodukter();
+
+                            }
+                        }
+
+
+
+                    });
+                });
+
                 $(".cmdLagreProdukt").click(function ()
-                {  
+                {
                     var SelectedDIV = $(this).parents(".form-group");
                     var produktid = $(".produktid", SelectedDIV).val();
                     var beskrivelse = $(".beskrivelse", SelectedDIV).val();
@@ -549,41 +964,48 @@
                     var butikkstatus = $(".butikkstatus", SelectedDIV).val();
                     var status = $(".status", SelectedDIV).val();
                     var pris = $(".pris", SelectedDIV).val();
-                    var _OutputElements = {};
-                    _OutputElements.produktid = produktid;
-                    _OutputElements.beskrivelse = beskrivelse;
-                    _OutputElements.bredde = bredde;
-                    _OutputElements.hoyde = hoyde;
-                    _OutputElements.dybde = dybde;
-                    _OutputElements.slidestatus = slidestatus;
-                    _OutputElements.webstatus = webstatus;
-                    _OutputElements.butikkstatus = butikkstatus;
-                    _OutputElements.status = status;
-                    _OutputElements.pris = pris;                       
-                        
+                    var _ObjOutputElements = {};
+                    var _ObjListProductTillegg = [];
+                    var _ObjTransferData = {};
+                    _ObjOutputElements.produktid = Number(produktid);
+                    _ObjOutputElements.beskrivelse = encodeURIComponent(beskrivelse);
+                    _ObjOutputElements.bredde = bredde;
+                    _ObjOutputElements.hoyde = hoyde;
+                    _ObjOutputElements.dybde = dybde;
+                    _ObjOutputElements.slidestatus = slidestatus;
+                    _ObjOutputElements.webstatus = webstatus;
+                    _ObjOutputElements.butikkstatus = butikkstatus;
+                    _ObjOutputElements.status = status;
+                    _ObjOutputElements.pris = pris;
                     $('.spes', SelectedDIV).each(function (index, obj)
-                    {                            
-                        var name = $(this).attr("name");
-                        var val = $(this).attr("value");
-                        _OutputElements[name] = val;             
-                            
+                    {
+                        _ObjListProductTillegg.push(
+                          {
+                               TilleggId: Number($(obj).attr("id")),
+                               TilleggTekst: encodeURIComponent($(obj).attr("value"))
+                           });
                     });
-                    console.log(JSON.stringify(_OutputElements))
+                    _ObjTransferData.Produkt = _ObjOutputElements;
+                    _ObjTransferData.ProduktTilegg = _ObjListProductTillegg;
+                    console.log(JSON.stringify(_ObjTransferData))
 
                     removeTopsliderMessage();
                     var SelectedINPUT = $(this).parents('.form-group').find('input');
                     var SelectedSELECT = $(this).parents('.form-group').find('select');
                     var SelectedTEXTAREA = $(this).parents('.form-group').find('textarea');
-                    
-                    console.log(SelectedINPUT);
+
                     SelectedINPUT.css({ "background-color": "white" });
                     SelectedSELECT.css({ "background-color": "white" });
                     SelectedTEXTAREA.css({ "background-color": "white" });
-                                           
-                    hentprodukter();
-                        
-              
-                });                    
+                    waitingDialog.show("Lagrer produkt");
+
+                    setTimeout(function ()
+                    {
+                        waitingDialog.hide();
+                        hentprodukter();
+                    }, 1500);
+
+                });
                 $('.hasChange').on('input', function ()
                 {
                     var SelectedDIV = $(this)
@@ -593,108 +1015,341 @@
                     $('.accordion h3').unbind('click');
                     $('.accordion a').unbind('click');
                     setTopsliderMessage("Skjema er ikke lagret", 0);
-                        
+
                 });
-                function upperCaseF(a)
-                {
-                    alert('kai');
-                    setTimeout(function ()
-                    {
-                        a.value = a.value.toUpperCase();
-                    }, 1);
-                }
+
                 $(".scroll").click(function ()
                 {
-                        
-                        
-                    //$("#scroll").ScrollTo();
+
+
+                    //$(".scroll").ScrollTo();
                     //$("#form-group").ScrollTo();
-                    //$("html, body").animate({ scrollTop: $(document).height() }, "slow");                        
+                    //$("html, body").animate({ scrollTop: $(document).height() }, "slow");
                     //$(".beskrivelse").animate({ scrollTop: $(document).height() }, "slow");
                 });
             }
         });
-             
-        
-            
+        adjustStyle($(this).width());
+        $(window).resize(function()
+        {
+            adjustStyle($(this).width());
+        });
+
+
     }
 // -->
     </script>
     <style>
-        .col-centered {
+        .col-centered
+        {
             float: none;
             margin: 0 auto;
         }
-        #logo {
+
+        #logo
+        {
             margin-left: 60px;
             margin-top: 20px;
-            display: block;            
+            display: block;
             margin-right: auto;
         }
-        .main_window {
+
+        .main_window
+        {
             width: 98%;
-            margin-top: 80px;            
+            margin-top: 80px;
             padding: 30px 30px 30px 30px;
             background-color: #ebebeb;
             border-radius: 35px;
             box-shadow: 10px 10px 5px #d9d9d9;
         }
-       .form-group{
-           height: 350px;
-       }
-       
+
+        .form-group
+        {
+            height: 400px;
+        }
+
+        .ButtonClicked
+        {
+            background-color: #337bb9;
+            color: white;
+            border: none;
+        }
+
+        .tilleggKnapp
+        {
+            border-radius: 4px;
+            border: none;
+            padding: 8px 60px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+        }
+
+        hr
+        {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin: 1em 0;
+            padding: 0;
+        }
+
+        .btn-circle
+        {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            line-height: 1.428571429;
+            border-radius: 15px;
+        }
+
+            .btn-circle.btn-lg
+            {
+                width: 50px;
+                height: 50px;
+                padding: 10px 16px;
+                font-size: 18px;
+                line-height: 1.33;
+                border-radius: 25px;
+                margin-bottom: 10px;
+            }
+
+            .btn-circle.btn-xl
+            {
+                width: 70px;
+                height: 70px;
+                padding: 10px 16px;
+                font-size: 24px;
+                line-height: 1.33;
+                border-radius: 35px;
+            }
+
+        .center
+        {
+            display: block;
+            margin: auto;
+        }
+
+        .txtned
+        {
+            margin-top: 5px;
+        }
 
 
-        
+
+
+        .spesimage
+        {
+            position: absolute;
+            right: 0;
+            top: 20px;
+        }
+
+        .deleteimage
+        {
+            position: relative;
+            left: 20px;
+            top: 0;
+        }
     </style>
 </head>
-<body>    
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header page-scroll">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <img class="navbar-brand" src="/images/logo/aa_logo80X75.png">
-                    <a class="navbar-brand" href="#">ABRAHAMSEN AUDIO</a>                    
-                </div>
-                <div class="collapse navbar-collapse" id="navbar-collapse-1">
-                    <ul class="nav navbar-nav">                        
-                        <li id ="activePortal" class="active portal"><a href="#">Portal</a></li>
-                        <li id ="activeMainMenu1"><a class="mainMenu1" href="#"></a></li>
-                        <li id ="activeMainMenu2"><a class="mainMenu2" href="#"></a></li>
-                        <li id ="activeMainMenu3"><a class="mainMenu3" href="#"></a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#"><span class="glyphicon glyphicon-user user"></span></a></li>
-                        <li><a id="cmdLoggut" href="#"><span class="glyphicon glyphicon-log-out logout"></span></a></li>
-                    </ul>
-                </div>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img class="navbar-brand" src="/images/logo/aa_logo80X75.png">
+                <a class="navbar-brand" href="#">ABRAHAMSEN AUDIO</a>
             </div>
-        </nav>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li id="activePortal" class="active portal"><a href="#">Portal</a></li>
+                    <li id="activeMainMenu1"><a class="mainMenu1" href="#"></a></li>
+                    <li id="activeMainMenu2"><a class="mainMenu2" href="#"></a></li>
+                    <li id="activeMainMenu3"><a class="mainMenu3" href="#"></a></li>
+                    <li id="activeMainMenu4"><a class="mainMenu4" href="#"></a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><span class="glyphicon glyphicon-user user"></span></a></li>
+                    <li><a id="cmdLoggut" href="#"><span class="glyphicon glyphicon-log-out logout"></span></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <section id="portal" class="topp_index">
             <div class="row">
                 <div class="main_window col-centered">
-                    
+
                 </div>
             </div>
         </section>
         <section id="products" class="topp_index" hidden>
-                <div class="row">
-                    <div class="main_window col-centered">
-                        <div id="produkt_visning">
 
-                        </div>
+            <div class="row">
+                <div class="main_window col-centered">
+                    <div class="row">
+
+                        <div class="col-sm-12"><button type="button" class="btn btn-primary btn-circle btn-lg" data-toggle="modal" data-target="#produktModal">+</button></div>
+
+                    </div>
+                    <div class="row">
+                        <div class="ledtekst"><div class="col-sm-2 txtned"></div><div class="col-sm-5 txtned"></div><div class="col-sm-1 txtned">Slider</div><div class="col-sm-1 txtned">Web</div><div class="col-sm-1 txtned">Shop</div><div class="col-sm-1 txtned">Status</div><div class="col-sm-1">&nbsp;</div></div>
+
+                    </div>
+                    <div id="produkt_visning">
+
                     </div>
                 </div>
-</section>
+            </div>
+        </section>
+        <section id="varer" class="topp_index" hidden>
+            <form id="frmReg">
+                <div class="row">
+                    <div class="main_window col-centered">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <div class="panel panel-default fau-all-marginBottom-7px">
+                                    <div class="panel-heading">
+
+                                        <table width="100%">
+                                            <tr>
+                                                <td>
+                                                    <table align="left">
+                                                        <tr>
+                                                            <td><span class="panel-title" id="spanPageLabel"></span></td>
+                                                            <td class="divider"></td>
+                                                            <td><button type="button" class="btn btn-danger btn-xs btn-block btn-shadow" id="cmdResetFilter"></button></td>
+                                                            <td class="divider"></td>
+                                                            <td><button type="button" class="btn btn-primary btn-block btn-xs btn-shadow" id="cmdAddNewItem"><i class="fa fa-pencil-square-o fa-lg fa-fw au-all-marginRight-4px"></i></button></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <table align="right">
+                                                        <tr>
+                                                            <td><button type="button" class="btn btn-info btn-xs btn-shadow help" id="cmdHelp"><i class="fa fa-question-circle fa-lg"></i></button></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <table width="100%">
+                            <tr>
+                                <td valign="top">
+
+                                    <div class="panel panel-default grid-panel">
+                                        <div class="panel-body">
+
+                                            <table class="grid-table">
+                                                <tr>
+                                                    <td>
+                                                        <table class="grid-header grid-table">
+                                                            <tr height="32px">
+                                                                <td width="10px"></td>
+                                                                <td width="60px" align="center"><i class="fa fa-picture-o fa-lg fa-fw"></i></td>
+                                                                <td class="divider"></td>
+                                                                <td width="100px" class="header" id="labelItemNo"></td>
+                                                                <td class="divider"></td>
+                                                                <td class="header" id="labelItemId"></td>
+                                                                <td class="divider"></td>
+                                                                <td width="header" class="labelDescription"></td>
+                                                                <td class="divider"></td>
+                                                                <td width="120px" id="labelQty"></td>
+                                                                <td class="divider"></td>
+                                                                <td width="120px" id="labelSupplier"></td>
+                                                                <td class="divider"></td>
+                                                                <td width="60px" align="center" id="labelEdit"></td>
+                                                                <td width="5px"></td>
+                                                                <td width="60px" align="center" id="labelStatus"></td>
+                                                                <td width="5px"></td>
+                                                                <td width="60px" align="center" id="labelDelete"></td>
+                                                                <td width="10px"></td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td height="340px" valign="top">
+                                                        <table id="gridTable" class="grid-table" style="table-layout: fixed;"></table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <table class="ui-widget-header grid-table">
+                                                            <tr>
+                                                                <td>
+                                                                    <table>
+                                                                        <tr height="32px">
+                                                                            <td align="center" width="10px"></td>
+                                                                            <td align="center" width="80px"><button type="button" class="btn btn-primary btn-xs btn-shadow btn-block firstgridpage" id="cmdFirstGridPage"><i class="fa fa-caret-left fa-lg fa-fw"></i></button></td>
+                                                                            <td align="center" width="5px"></td>
+                                                                            <td align="center" width="80px"><button type="button" class="btn btn-primary btn-xs btn-shadow btn-block previousgridpage" id="cmdPreviousGridPage"></button></td>
+                                                                            <td align="center" width="5px"></td>
+                                                                            <td align="center" width="80px"><button type="button" class="btn btn-primary btn-xs btn-shadow btn-block nextgridpage" id="cmdNextGridPage"></button></td>
+                                                                            <td align="center" width="5px"></td>
+                                                                            <td align="center" width="80px"><button type="button" class="btn btn-primary btn-xs btn-shadow btn-block lastgridpage" id="cmdLastGridPage"></button></td>
+                                                                            <td align="center" width="10px"></td>
+                                                                            <td align="center" width="50px" id="labelGridPage"></td>
+                                                                            <td align="center" width="30px" id="GridPageCurrent"></td>
+                                                                            <td align="center" width="30px" id="labelOfGridPage"></td>
+                                                                            <td align="center" width="30px" id="GridPageCount"></td>
+                                                                            <td align="center" width="70px">
+                                                                                <select id="GridPageSize" class="grid-page-size">
+                                                                                    <option value="10">10</option>
+                                                                                    <option value="20">20</option>
+                                                                                    <option value="30">30</option>
+                                                                                    <option value="40">40</option>
+                                                                                    <option value="50">50</option>
+                                                                                </select>
+                                                                            </td>
+                                                                            <td align="center" width="120px" id="labelCountPerPage"></td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="panel-footer">
+
+                                            <div id="GridInfoText"></div>
+
+                                        </div>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </form>
+        </section>
         <section id="customers" class="topp_index" hidden>
             <div class="row">
                 <div class="main_window col-centered">
-                    <p>This is a visible paragraph.</p>
+                    <p>Her kommer kunder</p>
                 </div>
             </div>
         </section>
@@ -705,6 +1360,33 @@
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="produktModal" tabindex="-1" role="dialog" aria-labelledby="produktModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="produktModalLabel">Nytt produkt</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="nyttprodukt">
+                                <label for="produktnavn" class="form-control-label">Produktnavn:</label>
+                                <input type="text" class="form-control" id="produktnavn">
+                            </div>
+                            <div class="nyttprodukt">
+                                <div id="produktkategorigruppe"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="cmdnyttprodukt" class="btn btn-primary">Lagre</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Template -->
     <link type="text/css" rel="stylesheet" href="/lib/css/main.css">

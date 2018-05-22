@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="abdb" Class="abdbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=91.192.223.172;Initial Catalog=abdb;User ID=levo2;Encrypt=False;TrustServerCertificate=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="abdbConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.tblBruker" Member="tblBrukers">
+    <Type Name="tblBruker">
+      <Column Name="BrukerId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BrukerTypeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FirmaId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="KnyttetId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RegDato" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Brukernr" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Firma" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Kontaktperson" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Fornavn" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Etternavn" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Tittel" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Gateadresse" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Postnr1" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Sted1" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Land1" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Postadresse" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Postnr2" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Sted2" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Land2" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Telefon" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Telefaks" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Mobil" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Epost" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Web" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Foretaksnummer" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Mva" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Fodselsdato" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Kjonn" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Brukernavn" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Passord" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Lat" Type="System.Decimal" DbType="Decimal(28,15)" CanBeNull="true" />
+      <Column Name="Lng" Type="System.Decimal" DbType="Decimal(28,15)" CanBeNull="true" />
+      <Column Name="Aktiveringskode" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Innhold" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Nyhetsmail" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="KundeId" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblProdukt" Member="tblProdukts">
+    <Type Name="tblProdukt">
+      <Column Name="ProduktId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProduktgruppeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProduktkategoriId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RegDato" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Produkt" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="pris" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="ProduktNr" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProduktBeskrivelse" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Bredde" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Hoyde" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Dybde" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Vekt" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="bilde1" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="bilde2" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="bilde3" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="bilde4" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ButikkStatus" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="LagerDato" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="WebStatus" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="slide" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblProduktgruppe" Member="tblProduktgruppes">
+    <Type Name="tblProduktgruppe">
+      <Column Name="ProduktgruppeId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProduktgruppeNr" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Produktgruppe" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="ProduktgruppeInfo" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblProduktkategori" Member="tblProduktkategoris">
+    <Type Name="tblProduktkategori">
+      <Column Name="ProduktkategoriId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProduktkategoriNr" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Produktkategori" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblTillegg" Member="tblTilleggs">
+    <Type Name="tblTillegg">
+      <Column Name="TilleggId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="KnyttetId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TilleggType" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="TilleggGruppe" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="TilleggTekst" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="TilleggTall" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TilleggMerknad" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 9.125" name="abdb">
+  <DataContextMoniker Name="/abdbDataContext" />
+  <nestedChildShapes>
+    <classShape Id="fc069a8f-d97c-4473-bf76-e46c279ba80b" absoluteBounds="0.75, 0.75, 2, 7.9245426432291648">
+      <DataClassMoniker Name="/abdbDataContext/tblBruker" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e01dc112-5802-47df-bd61-8c4d215d2932" absoluteBounds="0.765, 1.21, 1.9700000000000002, 7.3645426432291661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="809778f3-6a7c-4fb2-96d4-cca4ebb62467" absoluteBounds="3.75, 0.75, 2, 4.8477197265625">
+      <DataClassMoniker Name="/abdbDataContext/tblProdukt" />
+      <nestedChildShapes>
+        <elementListCompartment Id="85d6e471-b2e8-402b-8a73-ea449c4b3c76" absoluteBounds="3.765, 1.21, 1.9700000000000002, 4.2877197265625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="fa6380d6-80a8-4e32-a090-60253be8447b" absoluteBounds="6.75, 0.75, 2, 1.7708968098958329">
+      <DataClassMoniker Name="/abdbDataContext/tblProduktgruppe" />
+      <nestedChildShapes>
+        <elementListCompartment Id="16371758-4ee1-4a70-b87d-ad702fc2dcef" absoluteBounds="6.765, 1.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="078a72f6-1af7-4f22-9acd-75eec8f7aeca" absoluteBounds="6.75, 3.75, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/abdbDataContext/tblProduktkategori" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b970d005-d55b-432e-a663-96bdf2c8a0f5" absoluteBounds="6.765, 4.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c3be4e62-d730-4553-8a8f-3fd9ccbfd7f9" absoluteBounds="3.75, 6.75, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/abdbDataContext/tblTillegg" />
+      <nestedChildShapes>
+        <elementListCompartment Id="061237f8-30ef-4691-a019-71ea878868a9" absoluteBounds="3.765, 7.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

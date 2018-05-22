@@ -1085,6 +1085,120 @@ function updateAccordionContent()
     });
 }
 
+function setTableSorterMouseOver(SelectedVisibility)
+{
+    if (SelectedVisibility != undefined)
+    {
+        var _ThisButton = "";
+    }
+    $(".tablesorter_tr:odd").css({ "background-color": "#FFFFFF" });
+    $(".tablesorter_tr:even").css({ "background-color": "#F5F5F5" });
+    $(".tablesorter_tr:odd").mouseover(function()
+    {
+        $(this).css({ "background-color": "#337ab7", "color": "#FFFFFF" });
+        if (SelectedVisibility != undefined)
+        {
+            _ThisButton = $(this).find(".btn");
+            $(_ThisButton).css({ "visibility": "visible" });
+        }
+    });
+    $(".tablesorter_tr:even").mouseover(function()
+    {
+        $(this).css({ "background-color": "#337ab7", "color": "#FFFFFF" });
+        if (SelectedVisibility != undefined)
+        {
+            _ThisButton = $(this).find(".btn");
+            $(_ThisButton).css({ "visibility": "visible" });
+        }
+    });
+    $(".tablesorter_tr:odd").mouseout(function()
+    {
+        $(this).css({ "background-color": "#FFFFFF", "color": "#000000" });
+        if (SelectedVisibility != undefined)
+        {
+            _ThisButton = $(this).find(".btn");
+            $(_ThisButton).css({ "visibility": "hidden" });
+        }
+    });
+    $(".tablesorter_tr:even").mouseout(function()
+    {
+        $(this).css({ "background-color": "#F5F5F5", "color": "#000000" });
+        if (SelectedVisibility != undefined)
+        {
+            _ThisButton = $(this).find(".btn");
+            $(_ThisButton).css({ "visibility": "hidden" });
+        }
+    });
+}
+
+// Grid functions
+function setGridFunctions(SelectedArea)
+{
+    if (SelectedArea != "" && SelectedArea != undefined && SelectedArea != null)
+    {
+        SelectedArea = $(SelectedArea);
+    }
+    else
+    {
+        SelectedArea = "";
+    }
+    $(":input", SelectedArea).each(function()
+    {
+        if ($(this).is("button"))
+        {
+            if ($(this).hasClass("firstgridpage") || $(this).hasClass("previousgridpage") || $(this).hasClass("nextgridpage") || $(this).hasClass("lastgridpage"))
+            {
+                $(this).off().on('click', function()
+                {
+                    changeGridPage(this.id, SelectedArea);
+                });
+            }
+        }
+    });
+    var thisElementClass;
+    $(".header", SelectedArea).each(function()
+    {
+        $(this).off().on('click', function()
+        {
+            if ($(this).hasClass("headerSortAsc"))
+            {
+                thisElementClass = "headerSortDesc";
+                ObjPageData.OrderByClause = $(this).attr("data-attr") + " DESC"
+            }
+            else if ($(this).hasClass("headerSortDesc"))
+            {
+                thisElementClass = "headerSortAsc";
+                ObjPageData.OrderByClause = $(this).attr("data-attr") + " ASC"
+            }
+            else
+            {
+                thisElementClass = "headerSortAsc";
+                ObjPageData.OrderByClause = $(this).attr("data-attr") + " ASC"
+            }
+            $(".header").each(function()
+            {
+                $(this).removeClass("headerSortAsc");
+                $(this).removeClass("headerSortDesc");
+            });
+            showBackground();
+            $(this).addClass(thisElementClass);
+            ObjPageData.PageCurrent = 1;
+            ObjPageData.PageSize = $("#GridPageSize").val();
+            getContentData();
+        });
+    });
+    $("#GridPageSize", SelectedArea).off().on('change', function()
+    {
+        showBackground();
+        ObjPageData.PageCurrent = 1;
+        ObjPageData.PageSize = this.value;
+        getContentData();
+    });
+    $("#SearchText", SelectedArea).off().on('keyup', function()
+    {
+        searchGridContent(this.value);
+    });
+}
 function getIcons(SelectedType1, SelectedType2)
 {
     var validTypes =
